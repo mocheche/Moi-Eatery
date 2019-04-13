@@ -1,0 +1,19 @@
+<div class='container'>
+    <div class='row'>
+        <div class='col'>
+          	<div class='col-md-6 col-12 mx-auto'>
+            	<form method='POST' action='{% if action_url %}{{ action_url }}{% else %}{% url "login" %}{% endif %}'>         	{% csrf_token %}
+            		{% if next_url %}
+   					      <input type='hidden' name='next' value='{{ next_url }}' />
+    				    {% endif %}
+              		<table>
+              			{{ form.as_table }}
+              		</table>
+                  <div class="col-md-10 pull-right">
+              		    <button type='submit' class='btn btn-primary'>Submit</button>
+                  </div>
+            	</form>
+         	</div>
+        </div>
+    </div>
+</div>

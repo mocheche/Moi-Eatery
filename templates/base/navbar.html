@@ -1,0 +1,57 @@
+{% url 'home' as home_url %}
+{% url 'category' as category_url %}
+{% url 'contact' as contact_url %}
+{% url 'products:list' as product_list_url %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+{% url 'register' as register_url %}
+
+{% url 'account:home' as account_url %}
+{% url 'cart:home' as cart_url %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item {% if request.path == home_url %}active{% endif %}">
+        <a class="nav-link fas fa-home" href="{{ home_url }}"><span class="sr-only">(current)</span></a>
+      
+      <li class="nav-item {% if request.path == product_list_url %}active{% endif %}">
+        <a class="nav-link" href="{{ product_list_url }}">Products</a>
+      </li>
+
+
+      {% if request.user.is_authenticated %}
+       <li class="nav-item dropdown">
+        
+          <button type="button" class="btn dropdown-toggle" id="navbarDropdown"
+          data-toggle="dropdown"> Account <span class="caret"></span>
+         </button>
+
+
+         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item fas fa-home  {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}"></a>
+          <a class="dropdown-item" href="{{ account_url }}#billing">Billing</a>
+          <a class="dropdown-item" href="{% url 'account:user-product-history' %}">History</a>
+          <a class='dropdown-item' href='{% url "library" %}'>Library</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
+        </div>
+      </li>
+      {% else %}
+        <li class="nav-item {% if request.path == login_url %}active{% endif %}">
+        <a class="nav-link" href="{{ login_url }}">Login</a>
+      </li>
+      <li class="nav-item {% if request.path == register_url %}active{% endif %}">
+        <a class="nav-link" href="{{ register_url }}">Register</a>
+      </li>
+      {% endif %}
+      <li class="nav-item {% if request.path == cart_url %}active{% endif %}">
+        <a class="nav-link" href="{{ cart_url }}"><span class='navbar-cart-count'>{{ request.session.cart_items }}</span> <i class="fas fa-shopping-cart" aria-hidden="true"></i></a>
+        </li>
+      <li class="nav-item {% if request.path == contact_url %}active{% endif %}">
+        <a class="nav-link" href="{{ contact_url }}">Contact</a>
+      </li>
+    </ul>
+    {% include 'search/snippets/search-form.html' %}
+  </div>
+</nav>

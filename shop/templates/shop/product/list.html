@@ -1,0 +1,59 @@
+
+{% extends 'index.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}
+  {% if category %}{{ category.name }}{% else %}{% trans "Products" %}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div id="sidebar" class="col-sm-6 full-right" ">
+      <h3>{% trans "Categories" %}</h3>
+      <ul>
+        <li {% if not category %}class="selected"{% endif %}>
+          <a href="{% url "shop:product_list" %}">{% trans "All Categories" %}</a>
+        </li>
+        {% for c in categories %}
+          <li {% if category.slug == c.slug %}class="selected"{% endif %}>
+            <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div id="main" class="product-list">
+        <h1>{% if category %}{{ category.name }}{% else %}{% trans "Products" %}{% endif %}</h1>
+        {% for product in products %}
+          <div class="item">
+            <a href="{{ product.get_absolute_url }}">
+              <img src="{{ product.image.url }} " width="55" height="150">
+            </a>
+            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a><br>
+            Ksh : {{ product.price }}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="pagination">
+                 <span class="step-links">
+                  {% if products.has_previous%}
+                     <a href="?page=1">&laquo;  first</a>
+                     <a href="?page={{ products.previous_page_number }}"> &larr; previous </a>
+                   {% endif %}
+                   <span class="current"> 
+                       Page {{ products.number }} of {{ products.paginator.num_pages}}.
+                   </span> 
+                   {% if products.has_next %}
+                    <a href="?page= {{ products.next_page_number }}">  next &rarr;  </a>
+                    <a href="?page= {{products.paginator.num_pages }}" > last &raquo; </a>
+
+                 {% endif %}
+             </span>
+           </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

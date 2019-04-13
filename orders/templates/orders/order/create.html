@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Checkout" %}
+{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Checkout" %}</h1>
+
+  <div class="order-info">
+    <ul>
+      {% for item in cart %}
+        <li>
+          {{ item.quantity }} x {{ item.product.name }} 
+          <span>Ksh {{ item.total_price|floatformat:"2" }}</span>
+        </li>
+      {% endfor %}
+      {% if cart.coupon %}
+        <li>
+          {% blocktrans with code=cart.coupon.code discount=cart.coupon.discount %}
+            "{{ code }}" ({{ discount }}% off)
+          {% endblocktrans %}
+          <span> Ksh: {{ cart.get_discount|floatformat:"2" }}</span>
+        </li>
+      {% endif %}
+    </ul>
+    <p>{% trans "Total" %}: Ksh: {{ cart.get_total_price_after_discount|floatformat:"2" }}</p>
+  </div>
+
+  <form action="." method="post" class="order-form">
+    {{ form.table }}
+    <p><input type="submit" value="{% trans 'Place order' %}"></p>
+    {% csrf_token %}
+  </form>
+{% endblock %}

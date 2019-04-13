@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+ <div class='row  mb-3'>
+            {% if query %}
+            <div class='col-12' >
+                Results for <b>{{ query }}</b>
+                <hr/>
+            </div>
+            {% else %}
+
+            <div class='col-12 col-md-6 mx-auto py-5'>
+               {% include 'search/snippets/search-form.html' %}
+
+            </div>
+            <div class='col-12'>
+                <hr>
+            </div>
+            {% endif %}
+</div>
+
+
+        <div class='row'>
+
+
+
+    {% for obj in object_list %}
+        <div class='col'>
+
+        {% include 'products/snippets/card.html' with instance=obj %}  
+        
+        {% if forloop.counter|divisibleby:3 %}
+         </div> </div><div class='row'><div class='col-12'><hr/></div>
+        {% elif forloop.counter|divisibleby:2 %}
+            </div> </div><div class='row'><div class='col-12'><hr/></div>
+        {% else %}
+         </div>  
+        {% endif %}  
+    
+    {% endfor %}
+    {% if is_paginated %}
+            <div class="pager">
+                <span class="step-links">
+                    {% if page_obj.has_previous%}
+                        <a href="?page=1">&laquo;  first  </a>
+                        <a href="?page={{ page_obj.previous_page_number }}">&larr;  previous </a>
+                    {% endif %}
+                    <span class="current"> 
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages}}.
+                    </span> 
+                    {% if page_obj.has_next %}
+                        <a href="?page= {{ page_obj.next_page_number }}"> next &rarr;  </a>
+                        <a href="?page= {{ page_obj.paginator.num_pages }}" >  last &raquo;</a>
+
+                    {% endif %}
+                </span>
+
+            </div>
+            {% endif %}
+</div>
+{% endblock %}

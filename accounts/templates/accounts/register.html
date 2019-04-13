@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+ <div class='containcenter' style="color: blue;" >
+  <div class='row'>
+      <div class='col' >
+            
+        <div class='col-md-6 col-6 mx-auto pull-center'>
+            <p>{{ content }}</p>
+            <form role="form" method='POST'> 
+              <div class="form-group form-vertical form-responsive" >
+            	{% csrf_token %}
+              <table class="table table-bordered">
+                <div class="table-responsive" style="color: blue">
+              	{{ form.as_table }}
+                </div>
+              </table>
+             </div>
+              <div class="col-md-10 pull-right">
+              <button type='submit' class='btn btn-primary form-control '>Submit</button>
+            </div>
+            </form>
+         </div>
+       </div>
+  </div>
+</div>
+{% endblock %}
+
+

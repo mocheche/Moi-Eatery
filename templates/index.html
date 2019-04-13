@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+      <title>Ngeria</title>
+        {% include 'base/css.html' %}
+        {% block base_head %}{% endblock %}
+    </head>
+    <body style="font-size: 15px">
+
+      <div id="header" style="color: green">
+        <div>
+        <a href="/" class="logo">{% trans "Ngeria mesh" %}</a>
+      </div>
+        <div >
+          <a href="{% url 'login' %}" class="logo">{% trans "Login" %}</a>
+          </div>
+          <div>
+          <a href="{% url 'register' %}" class="logo">{% trans "Register" %}</a>
+        </div>
+        {% if request.user.is_aunticated %}
+        <div>
+          <a href="{% url 'accounts:profile' %}" class="logo">{% trans "Profile" %}</a>
+        </div>
+        {% endif %}
+       <div class="cart">        
+          {% with total_items=cart|length %}
+              {% if cart|length > 0 %}
+                <a href="{% url 'cart:cart_detail' %}">
+                  {% blocktrans with total_items_plural=total_items|pluralize  total_price=cart.get_total_price %}
+                    {{ total_items }} item{{ total_items_plural }},
+                    Ksh:{{ total_price }}
+                  {% endblocktrans %}
+                </a>
+              {% else %}
+                {% trans "Your cart is empty." %}
+              {% endif %}
+            {% endwith %}
+        </div>
+      </div>
+      <div id="content">
+        {% block content %}
+        {% endblock %}
+      </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <footer>
+              <p class="text-center">
+              <em class="text-caption text-center" style="margin-bottom: 0px">Copyright © {% now 'Y' %} Ngeria mesh app</em>
+                 By <strong><span style="color: green">Makori</span><span style="color:purple"> @cheche </span></strong>
+               </p>
+            </footer>
+        </div>
+      </div>
+    </div>
+      
+    </body>
+  </html>
