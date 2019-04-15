@@ -160,6 +160,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#Password Hashers
+
+PASSWORD_HASHERS = [
+                    'django.contrib.auth.hashers.BcryptPasswordHasher',
+                    ]
 
 #Email backend
 # EMAIL_BACKEND so allauth can proceed to send confirmation emails
