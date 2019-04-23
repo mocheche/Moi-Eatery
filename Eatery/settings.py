@@ -97,6 +97,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -163,8 +164,10 @@ AUTH_PASSWORD_VALIDATORS = [
 #Password Hashers
 
 PASSWORD_HASHERS = [
-                    'django.contrib.auth.hashers.BcryptPasswordHasher',
+                    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
                     ]
+
+#SENDSMS_BACKEND ='sendsms.sendsms.backends.console.SmsBackend'
 
 #Email backend
 # EMAIL_BACKEND so allauth can proceed to send confirmation emails
@@ -173,8 +176,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Add the 'allauth' backend to AUTHENTICATION_BACKEND and keep default ModelBackend
-AUTHENTICATION_BACKENDS = [ 'django.contrib.auth.backends.ModelBackend',
-                           'allauth.account.auth_backends.AuthenticationBackend']
+AUTHENTICATION_BACKENDS = [ 'django.contrib.auth.backends.RemoteUserBackend',
+                            'allauth.account.auth_backends.AuthenticationBackend']
 
 
 # Ensure SITE_ID is set sites app

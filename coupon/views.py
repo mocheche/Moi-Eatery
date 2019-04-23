@@ -1,7 +1,8 @@
 import datetime
 
-from django.shortcuts import  redirect
 from django.utils import timezone
+from django.http import HttpResponse
+from django.shortcuts import  redirect
 from django.views.decorators.http import require_POST
 
 from . models import Coupon
@@ -23,10 +24,5 @@ def coupon_apply(request):
 	 		request.session['coupon_id']  = coupon.id
 	 	except Coupon.DoesNotExist:
 	 		request.session['coupon_id']  = None
-
 	return redirect('cart:cart_detail')
-
-today      = datetime.date.today()
-next_month = today + datetime.timedelta(days=30)
-
-send_coupon_code.delay()
+send_coupon_code.delay()	
