@@ -3,7 +3,6 @@ import random
 import datetime
 from dateutil import rrule ,easter ,parser, relativedelta
 import calendar
-from collections import Iterable
 #import sched
 from celery import task
 from django.utils import timezone
@@ -12,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from Eatery.utils import random_string_generator
-from . models import Coupon 
+from . models import Coupon
 
 
 User = get_user_model()
@@ -43,21 +42,21 @@ class Holidays:
         end = self.tryparse(end)
         easters = [easter.easter(y) for y in range(start.year , end.year)]
         return set(d for d in easters if start <= d <= end)
-    
+
     def all_boxing(self, start, end):
         #Return the list of Boxing dates within start..end
         start = self.tryparse(start)
         end  = self.tryparse(end)
         days = [datetime.date(y ,12,26) for y in range(start.year , end.year)]
         return set(d for d in days if start<= d <= end)
-        
+
     def all_christmas(self , start ,end):
 		#Return the list of Chrismas dates within start..end
         start = self.tryparse(start)
         end  = self.tryparse(end)
         days = [datetime.date(y ,12,25) for y in range(start.year , end.year)]
         return set(d for d in days if start<= d <= end)
-    
+
     def all_labor(self , start ,end):
 		# return a list of labor days
         start = self.tryparse(start)
@@ -65,10 +64,10 @@ class Holidays:
         labors = rrule.rrule(freq= rrule.YEARLY, bymonth=9 ,byweekday=rrule.MO(1),
         					 dtstart=start , until=end)
         return  set(d.date() for d in labors)
-       
-    
+
+
     def read_holidays(self ,start ,end , holiday_file):
-		#Return a list of holiday dates	
+		#Return a list of holiday dates
         holidays = set()
         with open(holiday_file) as holiday_file:
             for line in holiday_file:
@@ -91,7 +90,7 @@ class Holidays:
         'KE':(all_labor,all_christmas,all_boxing,all_easter),
         'UG':(all_labor,all_christmas,all_boxing,all_easter),
 	}
-    
+
     def holidays(self, code, start, end ,file ):
 		#Read applicable holdays from the file
         all_holidays = self.read_holidays(start, end, file)
@@ -111,7 +110,7 @@ class Get_date(object):
 		while lastfriday.weekday() != calendar.FRIDAY:
 			lastfriday += oneday
 		return lastfriday
-		
+
 	def get_any_date(self ,day_name,start_date=None):
 		if start_date is None:
 			start_date = datetime.datetime.today()
@@ -149,46 +148,46 @@ def helper(start, end):
 # Then set the code in a tracking table to ensure we Track who gets what from our coupon
 # To prevent foul play
 def generate_code():
-	today   = timezone.now() 
+	today   = timezone.now()
 	expires = today + datetime.timedelta(days=30)
-	
+
 	# All codes so far in the database
 	all_codes = Coupon.objects.all()
 
-	# Deactivate expired codes in the database as we don't want to delete the 
+	# Deactivate expired codes in the database as we don't want to delete the
 	# For analytics purposes
 	for code  in all_codes:
-        # Remove inactive codes before you start comparing
-        if code.active == False:
-            code.delete()
+    #Remove inactive codes before you start comparing
+		if code.active == False:
+			code.delete()
 		if today >= code.valid_to:
 			# Then deactivate expired ones
 			code.active =False
 			code.save()
-    print(all_codes)
+	print(all_codes)
 
-	#Generate codes 
+	#Generate codes
 	if all_codes.count() < 10 and not  all_codes.count() > 15:
 		co = [random_string_generator(size=10) for x in range(3)]
 		for code_ in co:
-			coupon=Coupon.objects.create(code=code_ , valid_from=today, 
+			coupon=Coupon.objects.create(code=code_ , valid_from=today,
                                     discount=30,valid_to=expires,active=True)
 			coupon.save()
-	
-	# Select only active codes from all available codes in the database since we want to be 
+
+	# Select only active codes from all available codes in the database since we want to be
 	# Sure that only active ones are passed to the random selector list compression
 	codes = []
 	for index in range(all_codes.count()):
 		if codes[index].active == True:
-			codes.append(code) 
+			codes.append(code)
 	del code
 
 	#Then select only three random codes to send to three random users
-    try:
-        sent_codes = [random.choice(codes) for i in range(3)]
-        return sent_codes
-    except IndexError:
-        return None
+	try:
+		sent_codes = [random.choice(codes) for i in range(3)]
+		return sent_codes
+	except IndexError:
+		return None
 
 #send a code to 3 random users each , with a discount
 @task
@@ -225,6 +224,6 @@ def send_coupon_code():
                  code.active=False
                  code.save()
             return  sent_mail          #'Code Emailed Sucessifully'
-    	    
+
     else:
         return 'Code Not Emailed'
